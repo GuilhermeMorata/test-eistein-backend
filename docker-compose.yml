@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+
+  nest-app:
+    build: .
+    ports:
+      - "3010:3010"
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - DATABASE_HOST=mysql-db
+      - DATABASE_PORT=3306
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=rootpassword
+      - DATABASE_NAME=testdb
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    command: --init-file /data/application/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: nestuser
+      MYSQL_PASSWORD: nestpassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql-data:
+    driver: local
+    
+  
